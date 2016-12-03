@@ -16,11 +16,34 @@ use RstGroup\ConferenceSystem\Domain\Reservation\Conference;
 
 class ConferenceTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @todo: remove it
-     */
-    public function test_example_name()
-    {
-        $this->markTestSkipped();
+    /** @test */
+    public function cancelReservationForOrderExpectThatReservationWillBeCanceledAndReleaseSeatsForAnotherWaitingReservation() {
+
     }
+
+    /** @test TDD? */
+    public function cancelReservationForOrderExpectThrowExceptionIfOrderNotExists() {
+
+    }
+
+    /** @test TDD? */
+    public function cancelReservationForOrderExpectThatReservationWillBeCanceled() {
+
+    }
+
+    /** @test TDD? */
+    public function cancelReservationForOrderExpectThatReleaseSeats() {
+
+    }
+
+    /** @test TDD? */
+    public function cancelReservationForOrderExpectThatAvailableSeatsReservedForAnotherReservation() {
+
+    }
+
+    /** @test TDD? */
+    public function cancelReservationForOrderExpectThatAvailableSeatsQuantityIsThaSameAsReservationCanceled() {
+
+    }
+
 }

@@ -12,5 +12,5 @@ interface SeatDiscountStrategy
      * @param $discountedPrice
      * @return mixed discounted price
      */
-    public function calculate(Seat $seat, $price, $discountedPrice);
+    public function calculate(Seat $seat, $price);
 }

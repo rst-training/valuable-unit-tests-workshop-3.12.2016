@@ -4,9 +4,12 @@
 namespace RstGroup\ConferenceSystem\Domain\Payment\Test;
 
 
+use phpDocumentor\Reflection\DocBlock\Tags\See;
 use RstGroup\ConferenceSystem\Domain\Payment\AtLeastTenEarlyBirdSeatsDiscountStrategy;
+use RstGroup\ConferenceSystem\Domain\Payment\DiscountPoolStrategy;
 use RstGroup\ConferenceSystem\Domain\Payment\DiscountService;
 use RstGroup\ConferenceSystem\Domain\Payment\FreeSeatDiscountStrategy;
+use RstGroup\ConferenceSystem\Domain\Payment\SeatDiscountStrategy;
 use RstGroup\ConferenceSystem\Domain\Payment\SeatsStrategyConfiguration;
 use RstGroup\ConferenceSystem\Domain\Reservation\Seat;
 
@@ -40,5 +43,20 @@ class DiscountServiceTest extends \PHPUnit_Framework_TestCase
         $result = $discountService->calculateForSeat($seat, 7);
 
         $this->assertEquals(59.5, $result, 0.01);
+    }
+
+    /***
+     * Typy siedzień -> ma pule
+     *
+     */
+
+    /** @test */
+    public function returnsPriceAfterPoolDiscountWhenThePoolIsEmpty()
+    {
+        $discountPoolStrategy = new DiscountPoolStrategy();
+        $seat = new Seat('Erly bird', 10);
+
+        $this->assertEquals(250, $discountPoolStrategy->calculate($seat, 25));
+        $this->assertEquals(100, $discountPoolStrategy->calculate($seat, 10));
     }
 }

@@ -6,9 +6,9 @@ class ConferenceSeatsDao
 {
     protected $connection;
 
-    public function __construct($config)
+    public function __construct(\PDO $config)
     {
-        $this->connection = new \PDO($config['dns'], $config['username'], $config['password'], $config['options']);
+        $this->connection = $config;
     }
 
     /**

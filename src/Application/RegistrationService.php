@@ -3,9 +3,11 @@
 namespace RstGroup\ConferenceSystem\Application;
 
 use RstGroup\ConferenceSystem\Domain\Payment\PaypalPayments;
+use RstGroup\ConferenceSystem\Domain\Reservation\Conference;
 use RstGroup\ConferenceSystem\Domain\Reservation\ConferenceId;
 use RstGroup\ConferenceSystem\Domain\Payment\DiscountService;
 use RstGroup\ConferenceSystem\Domain\Reservation\OrderId;
+use RstGroup\ConferenceSystem\Domain\Reservation\Reservation;
 use RstGroup\ConferenceSystem\Domain\Reservation\ReservationId;
 use RstGroup\ConferenceSystem\Domain\Reservation\Seat;
 use RstGroup\ConferenceSystem\Domain\Reservation\SeatsCollection;
@@ -36,25 +38,38 @@ class RegistrationService
         $conference = $this->getConferenceRepository()->get(new ConferenceId($conferenceId));
         $reservation = $conference->getReservations()->get(new ReservationId(new ConferenceId($conferenceId), new OrderId($orderId)));
 
-        $totalCost = 0;
-        $seats = $reservation->getSeats();
-        $seatsPrices = $this->getConferenceDao()->getSeatsPrices($conferenceId);
-
-        foreach ($seats->getAll() as $seat) {
-            $priceForSeat = $seatsPrices[$seat->getType()][0];
-
-            $dicountedPrice = $this->getDiscountService()->calculateForSeat($seat, $priceForSeat);
-            $regularPrice = $priceForSeat * $seat->getQuantity();
-
-            $totalCost += min($dicountedPrice, $regularPrice);
-        }
-
         $conference->closeReservationForOrder(new OrderId($orderId));
+        $totalCost = $this->countTotalCost($reservation, $conferenceId, $this->getConferenceDao(), $this->getDiscountService());
 
         $approvalLink = $this->getPaypalPayments()->getApprovalLink($conference, $totalCost);
 
         $response = new RedirectResponse($approvalLink);
         $response->send();
+    }
+
+    /**
+     * @param Reservation $reservation
+     * @param ConferenceId $conferenceId
+     * @param ConferenceSeatsDao $conferenceSeatsDao
+     * @param DiscountService $discountService
+     * @return int|mixed
+     */
+    public function countTotalCost(Reservation $reservation, ConferenceId $conferenceId, ConferenceSeatsDao $conferenceSeatsDao, DiscountService $discountService)
+    {
+        $totalCost = 0;
+        $seats = $reservation->getSeats();
+        $seatsPrices = $conferenceSeatsDao->getSeatsPrices($conferenceId);
+
+        foreach ($seats->getAll() as $seat) {
+            $priceForSeat = $seatsPrices[$seat->getType()][0];
+
+            $dicountedPrice = $discountService->calculateForSeat($seat, $priceForSeat);
+            $regularPrice = $priceForSeat * $seat->getQuantity();
+
+            $totalCost += min($dicountedPrice, $regularPrice);
+        }
+
+        return $totalCost;
     }
 
     protected function fromArray($seats)
@@ -75,7 +90,7 @@ class RegistrationService
 
     protected function getConferenceDao()
     {
-        return new ConferenceSeatsDao(['dns' => 'mysql:host=localhost;dbname=test', 'username' => 'admin', 'password' => 'test', 'options' => []]);
+        return new ConferenceSeatsDao(new \PDO('mysql:host=localhost;dbname=test', 'admin', 'test'));
     }
 
     protected function getDiscountService()

@@ -30,6 +30,6 @@ class DiscountServiceTest extends \PHPUnit_Framework_TestCase
 
         $seat->method('getQuantity')->willReturn(10);
 
-        $this->assertEquals(59.5, $discountService->calculateForSeat($seat, 7), '', 0.01);
+        $this->assertEquals(70 * 85 / 100, $discountService->calculateForSeat($seat, 7), '', 0.01);
     }
 }

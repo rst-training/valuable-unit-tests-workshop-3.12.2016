@@ -130,5 +130,10 @@ class Conference
         return $this->reservations;
     }
 
+    public function calculateTotalCost()
+    {
+        return 500.00;
+    }
+
 
 }

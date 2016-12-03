@@ -37,9 +37,20 @@ class DiscountServiceTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function returns_discounted_price_for_all_seats_when_poll_is_greater_than_seats_quantity()
+    {
+        $poolDiscount = new PoolDiscountStrategy([1 => 100]);
+        $quantity = 100;
+        $seat = new Seat(1, $quantity);
+
+        $this->assertLessThan(100, $poolDiscount->calculate($seat, 1));
+    }
+
+    /**
+     * @test
+     */
     public function returns_same_price_for_seat_when_pool_empty()
     {
-
         $poolDiscount = new PoolDiscountStrategy();
         $price = 100;
         $seat = new Seat(1, 100);

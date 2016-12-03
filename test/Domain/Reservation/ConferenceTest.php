@@ -17,27 +17,27 @@ use RstGroup\ConferenceSystem\Domain\Reservation\Conference;
 class ConferenceTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testReservationRemoved()
+    public function testCancelReservationForOrderReservationRemoved()
     {
         $this->markTestSkipped();
     }
 
-    public function testSeatsAvailabilityIncreased()
+    public function testCancelReservationForOrderSeatsAvailabilityIncreased()
     {
         $this->markTestSkipped();
     }
 
-    public function testReservationFromWaitListMovedIfCanBe()
+    public function testCancelReservationForOrderReservationFromWaitListMovedIfCanBe()
     {
         $this->markTestSkipped();
     }
 
-    public function testReservationFromWaitListNotMovedIfCanNotBe()
+    public function testCancelReservationForOrderReservationFromWaitListNotMovedIfCanNotBe()
     {
         $this->markTestSkipped();
     }
 
-    public function testRequestedReservationDoesNotExist()
+    public function testCancelReservationForOrderRequestedReservationDoesNotExist()
     {
         $this->markTestSkipped();
     }

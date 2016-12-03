@@ -23,4 +23,29 @@ class ConferenceTest extends \PHPUnit_Framework_TestCase
     {
         $this->markTestSkipped();
     }
+
+    public function testMakeReservationForOrderIfReservationExists()
+    {
+
+    }
+
+    public function testMakeReservationForOrderIfAllTypesOfRequiredSeatsQuantityIsGraterThanAvailability()
+    {
+
+    }
+
+    public function testMakeReservationForOrderIfAllTypesOfRequiredSeatsQuantityIsEqualToAvailability()
+    {
+
+    }
+
+    public function testMakeReservationForOrderIfAllTypesOfRequiredSeatsQuantityIsLowerThanAvailability()
+    {
+
+    }
+
+    public function testMakeReservationForOrderIfOneTypeOfRequiredSeatsQuantityIsLowerThanAvailability()
+    {
+
+    }
 }

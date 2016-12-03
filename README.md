@@ -1,6 +1,6 @@
 # Workshop participant
 
-Jan Kowalski
+Jan Kowalski  
 
 # Setup
 

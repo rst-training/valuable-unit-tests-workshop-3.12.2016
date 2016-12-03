@@ -41,10 +41,13 @@ class RegistrationServiceTest extends \PHPUnit_Framework_TestCase
 
         $conferenceRepository->add(new Conference($conferenceId, $seats, new ReservationsCollection(), new ReservationsCollection()));
 
-        $registrationServiceMock->method('getConferenceRepository')->willReturn($conferenceRepository);
-
         $paypalPaymentsMock = $this->getMock(PaypalPayments::class);
         $paypalPaymentsMock->method('getApprovalLink')->will($this->returnArgument(2));
+
+        $registrationServiceMock->method('getConferenceRepository')->willReturn($conferenceRepository);
+        $registrationServiceMock->method('getPaypalPayments')->will($this->returnValue(function() use ($paypalPaymentsMock){
+            return $paypalPaymentsMock;
+        }));
 
         ob_start();
         $registrationServiceMock->confirmOrder(1, 1);

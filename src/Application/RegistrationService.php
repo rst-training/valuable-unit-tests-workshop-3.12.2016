@@ -85,6 +85,7 @@ class RegistrationService
             $priceForSeat = $seatsPrices[$seat->getType()][0];
 
             $discountedPrice = $this->discountService->calculateForSeat($seat, $priceForSeat);
+
             $regularPrice = $priceForSeat * $seat->getQuantity();
 
             $totalCost += min($discountedPrice, $regularPrice);

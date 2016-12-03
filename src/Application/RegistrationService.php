@@ -3,9 +3,11 @@
 namespace RstGroup\ConferenceSystem\Application;
 
 use RstGroup\ConferenceSystem\Domain\Payment\PaypalPayments;
+use RstGroup\ConferenceSystem\Domain\Reservation\Conference;
 use RstGroup\ConferenceSystem\Domain\Reservation\ConferenceId;
 use RstGroup\ConferenceSystem\Domain\Payment\DiscountService;
 use RstGroup\ConferenceSystem\Domain\Reservation\OrderId;
+use RstGroup\ConferenceSystem\Domain\Reservation\Reservation;
 use RstGroup\ConferenceSystem\Domain\Reservation\ReservationId;
 use RstGroup\ConferenceSystem\Domain\Reservation\Seat;
 use RstGroup\ConferenceSystem\Domain\Reservation\SeatsCollection;
@@ -15,6 +17,22 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class RegistrationService
 {
+    /**
+     * @var ConferenceSeatsDao
+     */
+    private $conferenceSeatsDao;
+    /**
+     * @var DiscountService
+     */
+    private $discountService;
+
+    public function __construct(ConferenceSeatsDao $conferenceSeatsDao, DiscountService $discountService)
+    {
+
+        $this->conferenceSeatsDao = $conferenceSeatsDao;
+        $this->discountService = $discountService;
+    }
+
     public function reserveSeats($orderId, $conferenceId, $seats)
     {
         $conference = $this->getConferenceRepository()->get(new ConferenceId($conferenceId));
@@ -55,6 +73,24 @@ class RegistrationService
 
         $response = new RedirectResponse($approvalLink);
         $response->send();
+    }
+
+    public function getTotalCostForReservation(Reservation $reservation, Conference $conference)
+    {
+        $seats = $reservation->getSeats();
+        $seatsPrices = $this->conferenceSeatsDao->getSeatsPrices($conference);
+
+        $totalCost = 0;
+        foreach ($seats->getAll() as $seat) {
+            $priceForSeat = $seatsPrices[$seat->getType()][0];
+
+            $dicountedPrice = $this->discountService->calculateForSeat($seat, $priceForSeat);
+            $regularPrice = $priceForSeat * $seat->getQuantity();
+
+            $totalCost += min($dicountedPrice, $regularPrice);
+        }
+
+        return $totalCost;
     }
 
     protected function fromArray($seats)

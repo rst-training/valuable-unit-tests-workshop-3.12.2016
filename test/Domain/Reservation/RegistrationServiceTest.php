@@ -10,7 +10,9 @@ namespace RstGroup\ConferenceSystem\Domain\Reservation\Test;
 
 
 use RstGroup\ConferenceSystem\Application\RegistrationService;
+use RstGroup\ConferenceSystem\Domain\Payment\DiscountService;
 use RstGroup\ConferenceSystem\Domain\Payment\PaypalPayments;
+use RstGroup\ConferenceSystem\Domain\Payment\SeatsStrategyConfiguration;
 use RstGroup\ConferenceSystem\Domain\Reservation\Conference;
 use RstGroup\ConferenceSystem\Domain\Reservation\ConferenceId;
 use RstGroup\ConferenceSystem\Domain\Reservation\OrderId;
@@ -21,6 +23,7 @@ use RstGroup\ConferenceSystem\Domain\Reservation\Seat;
 use RstGroup\ConferenceSystem\Domain\Reservation\SeatsAvailabilityCollection;
 use RstGroup\ConferenceSystem\Domain\Reservation\SeatsCollection;
 use RstGroup\ConferenceSystem\Infrastructure\Reservation\ConferenceMemoryRepository;
+use RstGroup\ConferenceSystem\Infrastructure\Reservation\ConferenceSeatsDao;
 
 class RegistrationServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -37,7 +40,7 @@ class RegistrationServiceTest extends \PHPUnit_Framework_TestCase
 
         $conferenceId = new ConferenceId(1);
 
-        $reservation = new Reservation(new ReservationId($conferenceId, new OrderId(1)), SeatsCollection::fromArray([new Seat(1,100)]));
+        $reservation = new Reservation(new ReservationId($conferenceId, new OrderId(1)), SeatsCollection::fromArray([new Seat(1, 100)]));
 
         $conferenceRepository->add(new Conference($conferenceId, $seats, new ReservationsCollection(), new ReservationsCollection()));
 
@@ -45,7 +48,7 @@ class RegistrationServiceTest extends \PHPUnit_Framework_TestCase
         $paypalPaymentsMock->method('getApprovalLink')->will($this->returnArgument(2));
 
         $registrationServiceMock->method('getConferenceRepository')->willReturn($conferenceRepository);
-        $registrationServiceMock->method('getPaypalPayments')->will($this->returnValue(function() use ($paypalPaymentsMock){
+        $registrationServiceMock->method('getPaypalPayments')->will($this->returnValue(function () use ($paypalPaymentsMock) {
             return $paypalPaymentsMock;
         }));
 
@@ -55,6 +58,33 @@ class RegistrationServiceTest extends \PHPUnit_Framework_TestCase
         ob_end_clean();
 
         var_dump($result);
+    }
+
+    /**
+     * @test
+     */
+    public function returns_total_cost_of_reserved_seats_for_reservation_in_conference_with_discount()
+    {
+        $discountService = new DiscountService(new SeatsStrategyConfiguration());
+        $conferenceDaoMock = $this->getMockBuilder(ConferenceSeatsDao::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $discountService = $this->getMockBuilder(DiscountService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $discountService->method('calculateForSeat')->willReturn(2);
+
+        $conferenceDaoMock->method('getSeatsPrices')->willReturn([1 => 1]);
+
+        $registrationService = new RegistrationService($conferenceDaoMock, $discountService);
+        $conferenceId = new ConferenceId(1);
+        $seats = SeatsAvailabilityCollection::fromArray([new Seat(1, 100)]);
+        $conference = new Conference($conferenceId, $seats, new ReservationsCollection(), new ReservationsCollection());
+        $reservation = new Reservation(new ReservationId($conferenceId, new OrderId(1)), SeatsCollection::fromArray([new Seat(1, 100)]));
+
+        $this->assertEquals(100, $registrationService->getTotalCostForReservation($reservation, $conference));
     }
 
 }

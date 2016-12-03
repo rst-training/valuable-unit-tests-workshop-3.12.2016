@@ -30,7 +30,7 @@ class SeatsAvailabilityCollection
 
     /**
      * @param Seat[] $seats
-     * @return SeatsCollection
+     * @return SeatsAvailabilityCollection
      */
     public static function fromArray(array $seats)
     {

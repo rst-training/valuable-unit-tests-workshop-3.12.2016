@@ -16,10 +16,47 @@ use RstGroup\ConferenceSystem\Domain\Reservation\Conference;
 
 class ConferenceTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @todo: remove it
-     */
-    public function test_example_name()
+    public function testMakeReservationForCorrectOrderId()
+    {
+        $this->markTestSkipped();
+    }
+
+    public function testMakeReservationForIncorrectOrderId()
+    {
+        $this->markTestSkipped();
+    }
+
+    public function testExecuteMakeReservationForOrderWithInvalidParameters()
+    {
+        $this->markTestSkipped();
+    }
+
+    public function testMakeReservationForExistingOrderId()
+    {
+        $this->markTestSkipped();
+    }
+
+    public function testMakeReservationForUnexistingOrderId()
+    {
+        $this->markTestSkipped();
+    }
+
+    public function testMakeReservationForEmptySeatsCollection()
+    {
+        $this->markTestSkipped();
+    }
+
+    public function testMakeReservationForSeatsAvailabilityGreaterThanSeatQuantity()
+    {
+        $this->markTestSkipped();
+    }
+
+    public function testMakeReservationForSeatsAvailabilityLowerThanSeatQuantity()
+    {
+        $this->markTestSkipped();
+    }
+
+    public function testMakeReservationForInvalidConferenceId()
     {
         $this->markTestSkipped();
     }

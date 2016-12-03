@@ -16,11 +16,30 @@ use RstGroup\ConferenceSystem\Domain\Reservation\Conference;
 
 class ConferenceTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @todo: remove it
-     */
-    public function test_example_name()
+
+    public function testReservationRemoved()
     {
         $this->markTestSkipped();
     }
+
+    public function testSeatsAvailabilityIncreased()
+    {
+        $this->markTestSkipped();
+    }
+
+    public function testReservationFromWaitListMovedIfCanBe()
+    {
+        $this->markTestSkipped();
+    }
+
+    public function testReservationFromWaitListNotMovedIfCanNotBe()
+    {
+        $this->markTestSkipped();
+    }
+
+    public function testRequestedReservationDoesNotExist()
+    {
+        $this->markTestSkipped();
+    }
+
 }

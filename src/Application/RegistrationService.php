@@ -84,10 +84,10 @@ class RegistrationService
         foreach ($seats->getAll() as $seat) {
             $priceForSeat = $seatsPrices[$seat->getType()][0];
 
-            $dicountedPrice = $this->discountService->calculateForSeat($seat, $priceForSeat);
+            $discountedPrice = $this->discountService->calculateForSeat($seat, $priceForSeat);
             $regularPrice = $priceForSeat * $seat->getQuantity();
 
-            $totalCost += min($dicountedPrice, $regularPrice);
+            $totalCost += min($discountedPrice, $regularPrice);
         }
 
         return $totalCost;

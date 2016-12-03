@@ -2,34 +2,20 @@
 
 namespace RstGroup\ConferenceSystem\Domain\Payment;
 
+use RstGroup\ConferenceSystem\Domain\Payment\SeatDiscountStrategy;
+
 class DiscountService
 {
-    /**
-     * @var SeatsStrategyConfiguration
-     */
-    private $configuration;
-
-    public function __construct(SeatsStrategyConfiguration $configuration)
-    {
-        $this->configuration = $configuration;
-    }
-
-    public function calculateForSeat($seat, $price)
+    public function calculateForSeat($seat, $price, array $discountStragegies = [])
     {
         $discountedPrice = null;
 
-        foreach ($this->seatDiscountStrategies() as $strategy) {
-            $discountedPrice = $strategy->calculate($seat, $price, $discountedPrice);
+        foreach ($discountStragegies as $strategy) {
+            if ($strategy instanceof SeatDiscountStrategy) {
+                $discountedPrice = $strategy->calculate($seat, $price, $discountedPrice);
+            }
         }
 
         return $discountedPrice;
-    }
-
-    protected function seatDiscountStrategies()
-    {
-       return [
-           new AtLeastTenEarlyBirdSeatsDiscountStrategy($this->configuration),
-           new FreeSeatDiscountStrategy($this->configuration),
-       ];
     }
 }

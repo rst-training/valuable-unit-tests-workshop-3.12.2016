@@ -6,7 +6,6 @@ namespace RstGroup\ConferenceSystem\Domain\Payment\Test;
 
 use RstGroup\ConferenceSystem\Domain\Payment\AtLeastTenEarlyBirdSeatsDiscountStrategy;
 use RstGroup\ConferenceSystem\Domain\Payment\DiscountService;
-use RstGroup\ConferenceSystem\Domain\Payment\FreeSeatDiscountStrategy;
 use RstGroup\ConferenceSystem\Domain\Payment\SeatsStrategyConfiguration;
 use RstGroup\ConferenceSystem\Domain\Reservation\Seat;
 
@@ -17,14 +16,15 @@ class DiscountServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function returns_price_discounted_by_15_percent_if_at_least_10_early_bird_seats_are_bought()
     {
-        $configuration = $this->getMock(SeatsStrategyConfiguration::class);
-        $discountService = new DiscountService($configuration);
-        $seat = $this->getMockBuilder(Seat::class)->disableOriginalConstructor()->getMock();
+        $configurationMock = $this->getMock(SeatsStrategyConfiguration::class);
+        $configurationMock->method('isEnabledForSeat')
+            ->will($this->returnValue(true));
 
-        $configuration->expects($this->at(0))->method('isEnabledForSeat')->with(AtLeastTenEarlyBirdSeatsDiscountStrategy::class)->willReturn(true);
-        $configuration->expects($this->at(1))->method('isEnabledForSeat')->with(FreeSeatDiscountStrategy::class)->willReturn(false);
-        $seat->expects($this->exactly(2))->method('getQuantity')->willReturn(10);
+        $discountService = new DiscountService();
+        $discountStrategy = new AtLeastTenEarlyBirdSeatsDiscountStrategy($configurationMock);
+        $seat = new Seat('Early bird seat', 10);
+        $discountedPrice = $discountService->calculateForSeat($seat, 100, [$discountStrategy]);
 
-        $this->assertEquals(59.5, $discountService->calculateForSeat($seat, 7), 0.01);
+        $this->assertEquals(850.0, $discountedPrice);
     }
 }

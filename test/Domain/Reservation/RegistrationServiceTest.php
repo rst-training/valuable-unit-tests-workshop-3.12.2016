@@ -76,7 +76,7 @@ class RegistrationServiceTest extends \PHPUnit_Framework_TestCase
 
         $discountService->method('calculateForSeat')->willReturn(2);
 
-        $conferenceDaoMock->method('getSeatsPrices')->willReturn([1 => 1]);
+        $conferenceDaoMock->method('getSeatsPrices')->willReturn([1 => [1]]);
 
         $registrationService = new RegistrationService($conferenceDaoMock, $discountService);
         $conferenceId = new ConferenceId(1);
